@@ -1,17 +1,15 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+
   }
 }
 </script>
@@ -23,6 +21,99 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+
+.jumbotron {
+    background: url('./assets/images/paradise-hotel-home.jpg') no-repeat center center;
+    background-size: cover;
+ }
+
+ .jumbotron h1 {
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 3rem;
+    color: whitesmoke;
+    margin-bottom: 0px;
+    word-spacing: 2rem;
+    text-shadow: 0px 0px 20px #333, 0px 0px 20px #333;
+ }
+
+.font-presentation, .font-room-description {
+    font-size: 1.3rem;
+}
+
+.icon {
+    height: 40px;
+    width: 40px;
+    background-color: dimgray;
+    font-size: 2rem;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.card-section-customer {
+    font-family: 'Roboto', sans-serif;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+}
+
+.card-header-customer {
+	margin:-20px 10px 0 10px;
+    height: 60px;
+	background: linear-gradient(-90deg, #f3e2c7, #D8B1A8);
+}
+
+.card-section-customer:hover {
+	box-shadow:1px 1px 20px #d2d2d2;
+}
+
+.bg-darkslategray {
+    background-color: #4b4b4b;
+}
+
+.color-gainsboro {
+    color:gainsboro;
+}
+
+.bg-goldenrod, .icon:hover {
+    background-color: goldenrod;
+}
+
+.color-goldenrod {
+    color: goldenrod;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-progress-bar {
+    width: 50%;
+    height: auto;
+    background-color: #d2d2d2;
+}
+
+.display-none {
+    display: none;
+}
+
+.filters-container {
+    border: 1px solid black;
+}
+
+
+
+
 </style>
