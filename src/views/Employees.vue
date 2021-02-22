@@ -20,19 +20,36 @@
 
       <!-- Filters and add button -->
       <div class="row my-4">
-        <div class="col-md-9 border border-secondary rounded bg-light">
-          <EmployeeFilter />
-        </div>
-
-        <!-- Button add-employee -->
         <div class="col-md-3 align-self-center mt-2">
-          <button
+          <!-- Filter toogle button -->
+          <div class="row justify-content-center my-2">
+            <span>Ocultar Filtros?</span>
+          </div>
+          <div class="row justify-content-center my-2">
+            <input
+              type="checkbox"
+              v-model="employeeFilter.isHidden"
+              @click="hideFilters(!employeeFilter.isHidden)"
+            />
+          </div>
+          <!-- Button add-employee -->
+          <button 
             type="button"
-            class="btn btn-primary btn-lg btn-block"
+            class="btn btn-primary btn-lg btn-block mb-2"
             @click="onNewEmployee"
           >
             Agregar Empleado
           </button>
+        </div>
+
+        <div
+          v-if="!employeeFilter.isHidden"
+          class="col-md-8 border border-secondary rounded bg-light"
+        >
+          <EmployeeFilter
+            @onChangeLastName="onChangeLastNameFilter"
+            @onChangeCategory="onChangeCategoryFilter"
+          />
         </div>
       </div>
 
@@ -51,7 +68,7 @@
           </tr>
         </thead>
         <EmployeeRow
-          v-for="employee in employees"
+          v-for="employee in filteredEmployees"
           :key="employee.id"
           :employee="employee"
           @onEditEmployee="editEmployee"
@@ -91,6 +108,11 @@ export default {
       employeeIdToDelete: "",
       isLoaded: false,
       employees: [],
+      employeeFilter: {
+        isHidden: false,
+        lastNameFilter: "",
+        categoryFilter: "--Todos--",
+      },
     };
   },
   mounted() {
@@ -124,6 +146,8 @@ export default {
     saveEmployee(employee) {
       this.showModal(false);
       this.isLoaded = false;
+      // hidden filters
+      this.hideFilters(true);
       if (employee.id === "") {
         // POST API
         fetch(apiUrl, {
@@ -154,7 +178,9 @@ export default {
           .then((res) => res.json())
           .then(() => {
             this.isLoaded = true;
-            this.employees[this.getIndexById(employee.id, this.employees)] = employee;
+            const employeeIndex = this.getIndexById(employee.id, this.employees);
+            this.employees = this.employees.map((e, index) => index === employeeIndex ? employee : e)
+            console.log(this.employees);
           })
           .catch((err) => console.log(err));
       }
@@ -191,6 +217,49 @@ export default {
           this.employees = this.employees.filter((employee) => employee.id !== id);
         })
         .catch((err) => console.log(err));
+    },
+    hideFilters(hide) {
+      this.employeeFilter.isHidden = hide
+      this.employeeFilter.lastNameFilter = "";
+      this.employeeFilter.categoryFilter = "--Todos--";
+    },
+    onChangeLastNameFilter(lastName) {
+      this.employeeFilter.lastNameFilter = lastName;
+    },
+    onChangeCategoryFilter(category) {
+      this.employeeFilter.categoryFilter = category;
+    },
+  },
+  computed: {
+    filteredEmployees: function () {
+      const employeesFiltered = this.employees.filter((employee) => {
+          return (
+            employee.last_name
+              .toUpperCase()
+              .includes(this.employeeFilter.lastNameFilter.toUpperCase()) &&
+            (this.employeeFilter.categoryFilter === "--Todos--" ||
+              employee.category === this.employeeFilter.categoryFilter)
+          );
+        });
+        console.log("aplique el filtro");
+        return employeesFiltered;
+
+      // if filters are enabled, returns the filtered employees array
+      // Otherwise, original employees array is returned
+      /* if (!this.employeeFilter.isHidden) {
+        const employeesFiltered = this.employees.filter((employee) => {
+          return (
+            employee.last_name
+              .toUpperCase()
+              .includes(this.employeeFilter.lastNameFilter.toUpperCase()) &&
+            (this.employeeFilter.categoryFilter === "--Todos--" ||
+              employee.category === this.employeeFilter.categoryFilter)
+          );
+        });
+        console.log("aplique el filtro");
+        return employeesFiltered;
+      } 
+      return this.employees; */
     },
   },
 };
