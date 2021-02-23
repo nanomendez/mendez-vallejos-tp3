@@ -9,10 +9,12 @@
       @onHideModal="showModal(false)"
     />
 
-    <EmployeeDeleteConfirmation
+    <ConfirmationModal
       v-if="employeeIdToDelete"
-      @onCancelDelete="cancelDelete"
-      @onConfirmDelete="deleteEmployee"
+      title="Borrar Empleado"
+      question="Confirma que desea borrar el Empleado?"
+      @onCancel="cancelDelete"
+      @onConfirm="deleteEmployee"
     />
 
     <div class="container mb-5">
@@ -86,10 +88,8 @@ import EmployeeRow from "../components/EmployeeRow";
 import EmployeeFilter from "../components/EmployeeFilter";
 import ProgressBar from "./ProgressBar";
 import EmployeeEdition from "../components/EmployeeEdition";
-import EmployeeDeleteConfirmation from "../components/EmployeeDeleteConfirmation";
-
-// Api URL
-const apiUrl = "https://602d989896eaad00176dca06.mockapi.io/employees/";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { API_URL, ALL_CATEGORIES } from "../constants"
 
 export default {
   components: {
@@ -99,25 +99,25 @@ export default {
     ProgressBar,
     EmployeeFilter,
     EmployeeEdition,
-    EmployeeDeleteConfirmation,
+    ConfirmationModal,
   },
   data() {
     return {
+      employees: [],
       editModalIsShowed: false,
       employeeToEdit: this.getNewEmployee(),
       employeeIdToDelete: "",
-      isLoaded: false,
-      employees: [],
+      isLoaded: false, // flag to spinner 
       employeeFilter: {
         isHidden: false,
         lastNameFilter: "",
-        categoryFilter: "--Todos--",
+        categoryFilter: ALL_CATEGORIES,
       },
     };
   },
   mounted() {
     // get employees data from api
-    fetch(apiUrl)
+    fetch(API_URL)
       .then((res) => res.json())
       .then((data) => {
         this.isLoaded = true;
@@ -149,8 +149,8 @@ export default {
       // hidden filters
       this.hideFilters(true);
       if (employee.id === "") {
-        // POST API
-        fetch(apiUrl, {
+        // POST API - New
+        fetch(API_URL, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -168,7 +168,7 @@ export default {
       } else {
         // is a modification
         // PUT API
-        fetch(`${apiUrl}${employee.id}`, {
+        fetch(`${API_URL}${employee.id}`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json",
@@ -180,7 +180,6 @@ export default {
             this.isLoaded = true;
             const employeeIndex = this.getIndexById(employee.id, this.employees);
             this.employees = this.employees.map((e, index) => index === employeeIndex ? employee : e)
-            console.log(this.employees);
           })
           .catch((err) => console.log(err));
       }
@@ -203,9 +202,8 @@ export default {
       const id = this.employeeIdToDelete;
       this.employeeIdToDelete = "";
       this.isLoaded = false;
-
       // DELETE API
-      fetch(`${apiUrl}${id}`, {
+      fetch(`${API_URL}${id}`, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",
@@ -221,7 +219,7 @@ export default {
     hideFilters(hide) {
       this.employeeFilter.isHidden = hide
       this.employeeFilter.lastNameFilter = "";
-      this.employeeFilter.categoryFilter = "--Todos--";
+      this.employeeFilter.categoryFilter = ALL_CATEGORIES;
     },
     onChangeLastNameFilter(lastName) {
       this.employeeFilter.lastNameFilter = lastName;
@@ -237,29 +235,11 @@ export default {
             employee.last_name
               .toUpperCase()
               .includes(this.employeeFilter.lastNameFilter.toUpperCase()) &&
-            (this.employeeFilter.categoryFilter === "--Todos--" ||
+            (this.employeeFilter.categoryFilter === ALL_CATEGORIES ||
               employee.category === this.employeeFilter.categoryFilter)
           );
         });
-        console.log("aplique el filtro");
         return employeesFiltered;
-
-      // if filters are enabled, returns the filtered employees array
-      // Otherwise, original employees array is returned
-      /* if (!this.employeeFilter.isHidden) {
-        const employeesFiltered = this.employees.filter((employee) => {
-          return (
-            employee.last_name
-              .toUpperCase()
-              .includes(this.employeeFilter.lastNameFilter.toUpperCase()) &&
-            (this.employeeFilter.categoryFilter === "--Todos--" ||
-              employee.category === this.employeeFilter.categoryFilter)
-          );
-        });
-        console.log("aplique el filtro");
-        return employeesFiltered;
-      } 
-      return this.employees; */
     },
   },
 };

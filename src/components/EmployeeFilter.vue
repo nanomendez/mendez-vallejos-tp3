@@ -18,10 +18,10 @@
         <input
           type="text"
           class="form-control"
-          name="last-name-filter-input"
-          value=""
+          id="last-name-filter-input"
           placeholder="Ingrese parte del Apellido"
           v-model="lastName"
+          v-focus
           @keyup="changeLastName"
         />
       </div>
@@ -31,6 +31,7 @@
         <label for="category-filter-input">Categoría</label>
         <select
           class="form-control"
+          id="category-filter-input"
           v-model="category"
           @change="changeCategory"
         >
@@ -48,11 +49,12 @@
   </div>
 </template>
 <script>
+import { ALL_CATEGORIES } from "../constants"
 export default {
   data() {
     return {
       lastName: "",
-      category: "--Todos--",
+      category: ALL_CATEGORIES,
     };
   },
   methods: {
@@ -64,7 +66,7 @@ export default {
     },
     clearFilters() {
       this.lastName = "";
-      this.category = "--Todos--";
+      this.category = ALL_CATEGORIES;
       this.changeLastName();
       this.changeCategory();
     },

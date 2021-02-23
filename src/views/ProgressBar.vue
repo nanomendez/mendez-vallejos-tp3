@@ -1,7 +1,7 @@
 <template>
   <div class="text-center mt-3">
     <div class="spinner-border" role="status">
-      <span class="sr-only">Loading...</span>
+      <span class="sr-only">Procesando...</span>
     </div>
   </div>
 </template>

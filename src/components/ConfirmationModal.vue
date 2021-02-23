@@ -5,24 +5,16 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Borrar Empleado</h5>
+              <h5 class="modal-title">{{title}}</h5>
             </div>
             <div class="modal-body">
-                <p>Confirma que desea borrar el Empleado?</p>
+              <p>{{question}}</p>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="cancel-btn"
-                @click="hideDeleteModal"
-              >
+              <button type="button" class="cancel-btn" @click="onClickCancel">
                 Cancelar
               </button>
-              <button
-                type="submit"
-                @click="confirmDeleteModal"
-                class="btn btn-primary"
-              >
+              <button type="submit" @click="onClickConfirm" class="btn btn-primary">
                 Aceptar
               </button>
             </div>
@@ -34,15 +26,18 @@
 </template>
 <script>
 export default {
-    methods: {
-        hideDeleteModal() {
-            this.$emit('onCancelDelete')
-
-        }, 
-        confirmDeleteModal() {
-            this.$emit('onConfirmDelete')
-        }
+  props: {
+    title: String,
+    question: String
+  },
+  methods: {
+    onClickCancel() {
+      this.$emit("onCancel");
     },
+    onClickConfirm() {
+      this.$emit("onConfirm");
+    },
+  },
 };
 </script>
 <style lang=""></style>
